@@ -1,0 +1,230 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+import { AUTHORS } from '../../data/authors';
+
+export function authorSlug(name: string): string {
+	return name
+		.toLowerCase()
+		.replace(/['']/g, '')
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/-+$/, '');
+}
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	const authorsMap = new Map<string, typeof posts>();
+
+	for (const post of posts) {
+		const slug = authorSlug(post.data.author);
+		if (!authorsMap.has(slug)) authorsMap.set(slug, []);
+		authorsMap.get(slug)!.push(post);
+	}
+
+	return Array.from(authorsMap.entries()).map(([slug, authorPosts]) => ({
+		params: { author: slug },
+		props: {
+			authorName: authorPosts[0].data.author,
+			authorSlug: slug,
+			posts: authorPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+		},
+	}));
+}
+
+const { authorName, authorSlug: slug, posts } = Astro.props;
+const authorData = AUTHORS[slug];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${authorName} — ${SITE_TITLE}`} description={`Posts by ${authorName}`} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="author-header">
+				{authorData?.photo && (
+					<img
+						src={authorData.photo}
+						alt={authorName}
+						class="author-photo"
+						onerror="this.style.display='none'"
+					/>
+				)}
+				<div class="author-info">
+					<h1>{authorName}</h1>
+					{authorData?.bio && <p class="author-bio">{authorData.bio}</p>}
+					{authorData?.socials && (
+						<ul class="author-socials">
+							{authorData.socials.map((s) => (
+								<li><a href={s.url} target="_blank">{s.label}</a></li>
+							))}
+						</ul>
+					)}
+				</div>
+			</div>
+
+			<p class="post-count">{posts.length} post{posts.length !== 1 ? 's' : ''}</p>
+
+			<ul class="post-list">
+				{posts.map((post) => (
+					<li>
+						<a href={`/${post.data.slug}.html`}>
+							<span class="post-title">{post.data.title}</span>
+							<span class="post-meta">
+								<FormattedDate date={post.data.date} />{post.data.category !== 'Uncategorized' && <> &mdash; {post.data.category}</>}
+							</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	main {
+		width: 820px;
+		max-width: calc(100% - 2em);
+		margin: auto;
+		padding: 3em 1em;
+	}
+
+	/* ── Author header ── */
+	.author-header {
+		display: flex;
+		gap: 1.5em;
+		align-items: flex-start;
+		margin-bottom: 2em;
+		padding-bottom: 2em;
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
+
+	.author-photo {
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
+		object-fit: cover;
+		flex-shrink: 0;
+		border: 2px solid rgb(var(--gray-light));
+	}
+
+	.author-info {
+		flex: 1;
+	}
+
+	.author-info h1 {
+		margin: 0 0 0.3em;
+		font-size: 1.8em;
+	}
+
+	.author-bio {
+		font-size: 0.95em;
+		color: rgb(var(--gray-dark));
+		margin: 0 0 0.75em;
+		line-height: 1.6;
+	}
+
+	.author-socials {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		gap: 1em;
+	}
+
+	.author-socials a {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.8em;
+		color: rgb(var(--gray));
+		text-decoration: none;
+		border: 1px solid rgb(var(--gray-light));
+		padding: 0.2em 0.6em;
+		border-radius: 4px;
+		transition: border-color 0.15s, color 0.15s;
+	}
+
+	.author-socials a:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+
+	/* ── Post count ── */
+	.post-count {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.85em;
+		color: rgb(var(--gray));
+		margin: 0 0 1em;
+	}
+
+	/* ── Post list ── */
+	.post-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.post-list li {
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
+
+	.post-list li:last-child {
+		border-bottom: none;
+	}
+
+	.post-list a {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1em;
+		padding: 0.5em 0;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.post-list a:hover .post-title {
+		color: var(--accent);
+	}
+
+	.post-title {
+		font-size: 0.95em;
+		color: rgb(var(--black));
+		transition: color 0.15s;
+		flex: 1;
+	}
+
+	.post-meta {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.78em;
+		color: rgb(var(--gray));
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	@media (max-width: 720px) {
+		.author-header {
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+		}
+
+		.author-socials {
+			justify-content: center;
+		}
+
+		.post-list a {
+			flex-direction: column;
+			gap: 0.2em;
+		}
+
+		.post-meta {
+			white-space: normal;
+		}
+	}
+</style>

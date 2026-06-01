@@ -1,0 +1,6 @@
+PLAN.md
+.claude/*
+.vscode/*
+gg_pelican/*
+node_modules/*
+blog/.vscode/*

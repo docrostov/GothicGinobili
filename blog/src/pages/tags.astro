@@ -1,0 +1,142 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+
+function categorySlug(name: string): string {
+	return name
+		.toLowerCase()
+		.replace(/['']/g, '')
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/-+$/, '');
+}
+
+const posts = await getCollection('blog');
+
+// Build category map with post counts and date ranges
+const categoryMap = new Map<string, { name: string; count: number; earliest: Date; latest: Date }>();
+for (const post of posts) {
+	const slug = categorySlug(post.data.category);
+	if (!categoryMap.has(slug)) {
+		categoryMap.set(slug, {
+			name: post.data.category,
+			count: 0,
+			earliest: post.data.date,
+			latest: post.data.date,
+		});
+	}
+	const entry = categoryMap.get(slug)!;
+	entry.count++;
+	if (post.data.date < entry.earliest) entry.earliest = post.data.date;
+	if (post.data.date > entry.latest) entry.latest = post.data.date;
+}
+
+const categories = Array.from(categoryMap.values()).sort((a, b) => b.count - a.count);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Tags — ${SITE_TITLE}`} description="All post categories on Gothic Ginobili" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Tags</h1>
+			<p class="total">{categories.length} tags</p>
+
+			<ul class="category-list">
+				{categories.map((cat) => (
+					<li>
+						<a href={`/category/${categorySlug(cat.name)}.html`}>
+							<span class="cat-name">{cat.name}</span>
+							<span class="cat-meta">
+								{cat.count} post{cat.count !== 1 ? 's' : ''}
+								&mdash;
+								{cat.earliest.getFullYear() === cat.latest.getFullYear()
+									? cat.earliest.getFullYear()
+									: `${cat.earliest.getFullYear()}–${cat.latest.getFullYear()}`}
+							</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	main {
+		width: 820px;
+		max-width: calc(100% - 2em);
+		margin: auto;
+		padding: 3em 1em;
+	}
+
+	h1 {
+		margin-bottom: 0.15em;
+	}
+
+	.total {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.85em;
+		color: rgb(var(--gray));
+		margin: 0 0 2em;
+	}
+
+	.category-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.category-list li {
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
+
+	.category-list li:last-child {
+		border-bottom: none;
+	}
+
+	.category-list a {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1em;
+		padding: 0.6em 0;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.category-list a:hover .cat-name {
+		color: var(--accent);
+	}
+
+	.cat-name {
+		font-size: 1em;
+		color: rgb(var(--black));
+		transition: color 0.15s;
+	}
+
+	.cat-meta {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.78em;
+		color: rgb(var(--gray));
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	@media (max-width: 720px) {
+		.category-list a {
+			flex-direction: column;
+			gap: 0.2em;
+		}
+
+		.cat-meta {
+			white-space: normal;
+		}
+	}
+</style>

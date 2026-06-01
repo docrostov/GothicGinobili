@@ -1,0 +1,183 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+import { AUTHORS } from '../../data/authors';
+
+function authorSlug(name: string): string {
+	return name
+		.toLowerCase()
+		.replace(/['']/g, '')
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/-+$/, '');
+}
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+// Group by year
+const byYear = new Map<number, typeof posts>();
+for (const post of posts) {
+	const year = post.data.date.getFullYear();
+	if (!byYear.has(year)) byYear.set(year, []);
+	byYear.get(year)!.push(post);
+}
+const years = Array.from(byYear.keys()).sort((a, b) => b - a);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Archives — ${SITE_TITLE}`} description="All posts on Gothic Ginobili" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Archives</h1>
+			<p class="total">{posts.length} posts, {years[years.length - 1]}–{years[0]}</p>
+
+			{years.map((year) => (
+				<section class="year-group">
+					<h2 class="year-heading">{year}</h2>
+					<ul>
+						{byYear.get(year)!.map((post) => {
+							const slug = authorSlug(post.data.author);
+							const photo = AUTHORS[slug]?.photo;
+							return (
+								<li>
+									<a href={`/${post.data.slug}.html`}>
+										<span class="post-title">{post.data.title}</span>
+										<span class="post-meta">
+											<FormattedDate date={post.data.date} />{post.data.category !== 'Uncategorized' && <> &mdash; {post.data.category}</>}
+										</span>
+										{photo && (
+											<img
+												src={photo}
+												alt={post.data.author}
+												title={post.data.author}
+												class="author-avatar"
+												width="22"
+												height="22"
+												style="width:22px;height:22px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgb(229,232,240);display:block;"
+												onerror="this.style.display='none'"
+											/>
+										)}
+									</a>
+								</li>
+							);
+						})}
+					</ul>
+				</section>
+			))}
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	main {
+		width: 820px;
+		max-width: calc(100% - 2em);
+		margin: auto;
+		padding: 3em 1em;
+	}
+
+	h1 {
+		margin-bottom: 0.15em;
+	}
+
+	.total {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.85em;
+		color: rgb(var(--gray));
+		margin: 0 0 2.5em;
+	}
+
+	.year-group {
+		margin-bottom: 2.5em;
+	}
+
+	.year-heading {
+		font-size: 1.1em;
+		font-family: 'Inter', system-ui, sans-serif;
+		font-weight: 600;
+		letter-spacing: 0.02em;
+		color: var(--accent);
+		border-bottom: 1px solid rgb(var(--gray-light));
+		padding-bottom: 0.4em;
+		margin: 0 0 0.5em;
+	}
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	li {
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
+
+	li:last-child {
+		border-bottom: none;
+	}
+
+	li a {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.75em;
+		padding: 0.5em 0;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	li a:hover .post-title {
+		color: var(--accent);
+	}
+
+	.post-title {
+		font-size: 0.95em;
+		color: rgb(var(--black));
+		transition: color 0.15s;
+		flex: 1;
+	}
+
+	.post-meta {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.78em;
+		color: rgb(var(--gray));
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	.author-avatar {
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		object-fit: cover;
+		flex-shrink: 0;
+		border: 1px solid rgb(var(--gray-light));
+		display: block;
+	}
+
+	@media (max-width: 720px) {
+		li a {
+			flex-wrap: wrap;
+			gap: 0.2em;
+		}
+
+		.post-meta {
+			white-space: normal;
+			flex-basis: 100%;
+		}
+
+		.author-avatar {
+			display: none;
+		}
+	}
+</style>

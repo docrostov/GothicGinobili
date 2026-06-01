@@ -1,0 +1,234 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const featured = posts[0];
+const cards = posts.slice(1, 4);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+
+			<!-- Intro -->
+			<section class="intro">
+				<p>
+					Gothic Ginobili is a basketball blog. The blog's heydey was 2011 to 2016. It featured
+					a few oddball writers, longform nonsense about the league, and confusing analysis that
+					delighted our *dozens* of readers. The blog has returned -- quieter now, with occasional 
+					missives from the older pen of Aaron McGuire. <a href="/about">Find out more here.</a>
+				</p>
+			</section>
+
+			<!-- Featured post -->
+			{featured && (
+				<section class="featured">
+					<a href={`/${featured.data.slug}.html`} class="featured-link">
+						{featured.data.heroImage && (
+							<div class="featured-hero">
+								<img src={featured.data.heroImage} alt={featured.data.heroImageCredit ?? ''} />
+							</div>
+						)}
+						<div class="featured-body">
+							<p class="featured-eyebrow">Latest post</p>
+							<h2 class="featured-title">{featured.data.title}</h2>
+							<p class="featured-meta">
+								<FormattedDate date={featured.data.date} /> &mdash; {featured.data.category}
+							</p>
+						</div>
+					</a>
+				</section>
+			)}
+
+			<!-- Card row -->
+			<section class="cards">
+				{cards.map((post) => (
+					<a href={`/${post.data.slug}.html`} class="card">
+						{post.data.heroImage && (
+							<div class="card-hero">
+								<img src={post.data.heroImage} alt="" />
+							</div>
+						)}
+						<div class="card-body">
+							<p class="card-category">{post.data.category}</p>
+							<h3 class="card-title">{post.data.title}</h3>
+							<p class="card-meta"><FormattedDate date={post.data.date} /></p>
+						</div>
+					</a>
+				))}
+			</section>
+
+			<p class="archives-link"><a href="/blog">Browse all archives &rarr;</a></p>
+
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	main {
+		max-width: 860px;
+	}
+
+	/* ── Intro ── */
+	.intro {
+		border-left: 3px solid var(--accent);
+		padding: 0.25em 0 0.25em 1.25em;
+		margin-bottom: 2.5em;
+		color: rgb(var(--gray));
+	}
+
+	.intro p {
+		margin: 0;
+	}
+
+	.intro a {
+		white-space: nowrap;
+		font-style: normal;
+	}
+
+	/* ── Featured ── */
+	.featured {
+		margin-bottom: 2.5em;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 6px;
+		overflow: hidden;
+	}
+
+	.featured-link {
+		display: block;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.featured-hero img {
+		width: 100%;
+		height: 380px;
+		object-fit: cover;
+		display: block;
+		border-radius: 0;
+	}
+
+	.featured-body {
+		padding: 1.25em 1.5em 1.5em;
+	}
+
+	.featured-eyebrow {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.72em;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--accent);
+		margin: 0 0 0.5em;
+	}
+
+	.featured-title {
+		font-size: 1.7em;
+		margin: 0 0 0.4em;
+		line-height: 1.2;
+		color: rgb(var(--black));
+		transition: color 0.15s;
+	}
+
+	.featured-link:hover .featured-title {
+		color: var(--accent);
+	}
+
+	.featured-meta {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.8em;
+		color: rgb(var(--gray));
+		margin: 0;
+	}
+
+	/* ── Cards ── */
+	.cards {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.25em;
+		margin-bottom: 2em;
+	}
+
+	.card {
+		display: flex;
+		flex-direction: column;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 6px;
+		overflow: hidden;
+		text-decoration: none;
+		color: inherit;
+		transition: border-color 0.15s;
+	}
+
+	.card:hover {
+		border-color: var(--accent);
+	}
+
+	.card-hero img {
+		width: 100%;
+		height: 140px;
+		object-fit: cover;
+		display: block;
+	}
+
+	.card-body {
+		padding: 1em;
+		flex: 1;
+	}
+
+	.card-category {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.7em;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.07em;
+		color: var(--accent);
+		margin: 0 0 0.4em;
+	}
+
+	.card-title {
+		font-size: 1em;
+		margin: 0 0 0.5em;
+		line-height: 1.3;
+		color: rgb(var(--black));
+	}
+
+	.card-meta {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.75em;
+		color: rgb(var(--gray));
+		margin: 0;
+	}
+
+	/* ── Archives link ── */
+	.archives-link {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 0.875em;
+		margin: 0;
+	}
+
+	/* ── Mobile ── */
+	@media (max-width: 720px) {
+		.cards {
+			grid-template-columns: 1fr;
+		}
+
+		.featured-hero img {
+			height: 220px;
+		}
+	}
+</style>

@@ -1,0 +1,63 @@
+---
+const today = new Date();
+---
+
+<footer>
+	<p class="copyright">&copy; {today.getFullYear()} Aaron McGuire • <a href="https://twitter.com/docrostov/">@docrostov</a></p>
+	<p class="powered-by">
+		Powered by <a href="https://astro.build" target="_blank">Astro</a>
+		<img src="/astro-logo.svg" alt="Astro" width="14" height="14" class="astro-icon" />
+	</p>
+</footer>
+
+<style>
+	footer {
+		padding: 2.5em 1em;
+		text-align: center;
+		font-family: 'Inter', system-ui, sans-serif;
+		background: rgb(var(--black));
+		color: #c8c3bb;
+		border-top: 3px solid var(--accent);
+	}
+
+	footer p {
+		margin: 0;
+	}
+
+	footer a {
+		color: #c8c3bb;
+		text-decoration: none;
+	}
+
+	footer a:hover {
+		color: #fff;
+	}
+
+	.copyright {
+		font-size: 0.8em;
+		margin-bottom: 0.6em;
+	}
+
+	.powered-by {
+		font-size: 0.6em;
+		color: #6b6660;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.35em;
+	}
+
+	.powered-by a {
+		color: #6b6660;
+	}
+
+	.powered-by a:hover {
+		color: #c8c3bb;
+	}
+
+	.astro-icon {
+		filter: brightness(0) invert(0.45);
+		display: inline-block;
+		vertical-align: middle;
+	}
+</style>

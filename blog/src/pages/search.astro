@@ -1,0 +1,59 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Search — ${SITE_TITLE}`} description="Search all posts on Gothic Ginobili" />
+		<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Search</h1>
+			<div id="search"></div>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<script>
+	window.addEventListener('DOMContentLoaded', () => {
+		// @ts-ignore — pagefind-ui is injected at build time, not a module
+		new PagefindUI({
+			element: '#search',
+			showSubResults: false,
+			showImages: false,
+		});
+	});
+</script>
+
+<style>
+	main {
+		width: 820px;
+		max-width: calc(100% - 2em);
+		margin: auto;
+		padding: 3em 1em;
+	}
+
+	h1 {
+		margin-bottom: 0.75em;
+	}
+
+	/* ── Pagefind UI skin to match site ── */
+	#search {
+		--pagefind-ui-scale: 0.9;
+		--pagefind-ui-primary: var(--accent);
+		--pagefind-ui-text: rgb(var(--gray-dark));
+		--pagefind-ui-background: var(--bg);
+		--pagefind-ui-border: rgb(var(--gray-light));
+		--pagefind-ui-tag: rgb(var(--gray-light));
+		--pagefind-ui-border-width: 1px;
+		--pagefind-ui-border-radius: 4px;
+		--pagefind-ui-font: 'Inter', system-ui, sans-serif;
+	}
+</style>

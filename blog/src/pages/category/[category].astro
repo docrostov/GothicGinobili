@@ -1,0 +1,88 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+
+export function categorySlug(name: string): string {
+	return name
+		.toLowerCase()
+		.replace(/['']/g, '')        // strip apostrophes before hyphenating
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/-+$/, '');
+}
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	const categoriesMap = new Map<string, typeof posts>();
+
+	for (const post of posts) {
+		const slug = categorySlug(post.data.category);
+		if (!categoriesMap.has(slug)) categoriesMap.set(slug, []);
+		categoriesMap.get(slug)!.push(post);
+	}
+
+	return Array.from(categoriesMap.entries()).map(([slug, categoryPosts]) => ({
+		params: { category: slug },
+		props: {
+			categoryName: categoryPosts[0].data.category,
+			posts: categoryPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+		},
+	}));
+}
+
+const { categoryName, posts } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${categoryName} — ${SITE_TITLE}`} description={`All posts in ${categoryName}`} />
+		<style>
+			main {
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 1em;
+			}
+			h1 { margin-bottom: 0.25em; }
+			.post-count { color: rgb(var(--gray)); margin-bottom: 2em; }
+			ul {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			li {
+				border-bottom: 1px solid rgb(var(--gray-light));
+				padding: 0.75em 0;
+			}
+			li:last-child { border-bottom: none; }
+			a { text-decoration: none; }
+			a:hover .title { color: rgb(var(--accent)); }
+			.title { margin: 0 0 0.2em; font-size: 1.1em; }
+			.meta { margin: 0; color: rgb(var(--gray)); font-size: 0.875em; }
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>{categoryName}</h1>
+			<p class="post-count">{posts.length} post{posts.length !== 1 ? 's' : ''}</p>
+			<ul>
+				{posts.map((post) => (
+					<li>
+						<a href={`/${post.data.slug}.html`}>
+							<p class="title">{post.data.title}</p>
+							<p class="meta">
+								<FormattedDate date={post.data.date} /> &mdash; {post.data.author}
+							</p>
+						</a>
+					</li>
+				))}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>

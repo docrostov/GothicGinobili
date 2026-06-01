@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@400;500&display=swap');
+
+:root {
+	--accent: #8b1a1a;          /* deep burgundy — nods to Spurs alternate, not obvious */
+	--accent-light: #b5312a;
+	--black: 20, 18, 16;        /* warm ink, not cold pure black */
+	--gray: 110, 105, 98;
+	--gray-light: 210, 206, 199;
+	--gray-dark: 38, 35, 30;
+	--bg: #faf8f4;              /* warm off-white, like newsprint */
+	--box-shadow:
+		0 2px 6px rgba(var(--gray), 20%), 0 8px 24px rgba(var(--gray), 15%);
+}
+
+body {
+	font-family: 'Lora', Georgia, serif;
+	margin: 0;
+	padding: 0;
+	text-align: left;
+	background-color: var(--bg);
+	color: rgb(var(--gray-dark));
+	font-size: 19px;
+	line-height: 1.8;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+main {
+	width: 820px;
+	max-width: calc(100% - 2em);
+	margin: auto;
+	padding: 3em 1em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'Lora', Georgia, serif;
+	margin: 1.5rem 0 0.5rem 0;
+	color: rgb(var(--black));
+	line-height: 1.25;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+}
+
+h1 { font-size: 2.4em; }
+h2 { font-size: 1.6em; }
+h3 { font-size: 1.25em; }
+h4 { font-size: 1.1em; }
+h5 { font-size: 1em; }
+
+strong, b {
+	font-weight: 600;
+}
+
+a {
+	color: var(--accent);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+}
+
+a:hover {
+	color: var(--accent-light);
+}
+
+p {
+	margin-bottom: 1em;
+}
+
+.prose p {
+	margin-bottom: 1.6em;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 4px;
+}
+
+code {
+	font-size: 0.875em;
+	padding: 2px 5px;
+	background-color: rgb(var(--gray-light));
+	border-radius: 3px;
+}
+
+pre {
+	padding: 1.5em;
+	border-radius: 6px;
+}
+
+pre > code {
+	all: unset;
+}
+
+blockquote {
+	border-left: 3px solid var(--accent);
+	padding: 0em 0 0em 1.25em;
+	margin: 1.5em 1.5em;
+	color: #5c5c5c;
+	font-style: italic;
+	font-size: 1em;
+}
+
+hr {
+	border: none;
+	border-top: 1px solid rgb(var(--gray-light));
+	margin: 2.5em 0;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.9em;
+}
+
+table th {
+	font-family: 'Inter', system-ui, sans-serif;
+	font-weight: 500;
+	text-align: left;
+	border-bottom: 2px solid rgb(var(--gray-light));
+	padding: 0.5em 0.75em;
+}
+
+table td {
+	padding: 0.5em 0.75em;
+	border-bottom: 1px solid rgb(var(--gray-light));
+}
+
+/* Figures & captions */
+figure {
+	margin: 2em auto;
+	max-width: 480px;
+}
+
+figure img {
+	display: block;
+	max-width: 100%;
+}
+
+figcaption {
+	font-family: 'Inter', system-ui, sans-serif;
+	font-size: 0.8em;
+	color: rgb(var(--gray));
+	text-align: left;
+	margin-top: 0.4em;
+	font-style: italic;
+}
+
+/* Footnotes */
+.footnotes {
+	margin-top: 3em;
+	padding-top: 1.5em;
+	border-top: 1px solid rgb(var(--gray-light));
+	font-size: 0.875em;
+	color: rgb(var(--gray));
+}
+
+.footnotes ol {
+	padding-left: 1.25em;
+}
+
+.footnotes li {
+	margin-bottom: 0.5em;
+}
+
+sup a {
+	font-family: 'Inter', system-ui, sans-serif;
+	font-size: 0.75em;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+@media (max-width: 720px) {
+	body { font-size: 17px; }
+	main { padding: 1.5em 1em; }
+	h1 { font-size: 1.9em; }
+}
+
+.sr-only {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	position: absolute !important;
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px);
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
