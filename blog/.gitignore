@@ -1,5 +1,8 @@
 # build output
 dist/
+
+# unused starter kit assets
+src/assets/
 # generated types
 .astro/
 
