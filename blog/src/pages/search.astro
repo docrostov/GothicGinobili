@@ -10,6 +10,7 @@ import { SITE_TITLE } from '../consts';
 	<head>
 		<BaseHead title={`Search — ${SITE_TITLE}`} description="Search all posts on Gothic Ginobili" />
 		<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+		<script is:inline src="/pagefind/pagefind-ui.js"></script>
 	</head>
 	<body>
 		<Header />
@@ -21,9 +22,8 @@ import { SITE_TITLE } from '../consts';
 	</body>
 </html>
 
-<script>
+<script is:inline>
 	window.addEventListener('DOMContentLoaded', () => {
-		// @ts-ignore — pagefind-ui is injected at build time, not a module
 		new PagefindUI({
 			element: '#search',
 			showSubResults: false,
