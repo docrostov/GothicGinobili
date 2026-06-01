@@ -81,6 +81,7 @@ const cards = posts.slice(1, 4);
 <style>
 	main {
 		max-width: 860px;
+		overflow-x: hidden;
 	}
 
 	/* ── Intro ── */
@@ -223,7 +224,7 @@ const cards = posts.slice(1, 4);
 	/* ── Mobile ── */
 	@media (max-width: 720px) {
 		main {
-			overflow-x: hidden;
+			max-width: calc(100% - 2em);
 		}
 
 		.cards {
