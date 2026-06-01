@@ -91,14 +91,14 @@ const authorPhoto = AUTHORS[authorSlug]?.photo;
 
 			{/* Mobile prev/next — static, at bottom of content */}
 			<nav class="post-nav-mobile" aria-label="Post navigation">
-				{prevPost && (
-					<a href={`/${prevPost.data.slug}.html`} class="mobile-prev">
-						← <span>{prevPost.data.title}</span>
-					</a>
-				)}
 				{nextPost && (
 					<a href={`/${nextPost.data.slug}.html`} class="mobile-next">
-						<span>{nextPost.data.title}</span> →
+						← <span>{nextPost.data.title}</span>
+					</a>
+				)}
+				{prevPost && (
+					<a href={`/${prevPost.data.slug}.html`} class="mobile-prev">
+						<span>{prevPost.data.title}</span> →
 					</a>
 				)}
 			</nav>

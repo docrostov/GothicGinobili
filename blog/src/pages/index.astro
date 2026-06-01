@@ -96,7 +96,6 @@ const cards = posts.slice(1, 4);
 	}
 
 	.intro a {
-		white-space: nowrap;
 		font-style: normal;
 	}
 
@@ -223,6 +222,10 @@ const cards = posts.slice(1, 4);
 
 	/* ── Mobile ── */
 	@media (max-width: 720px) {
+		main {
+			overflow-x: hidden;
+		}
+
 		.cards {
 			grid-template-columns: 1fr;
 		}
