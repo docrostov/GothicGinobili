@@ -2,6 +2,7 @@
 Hello, dear reader! This is the GitHub repository where the Gothic Ginobili blog's code is stored. The actual site is on https://gothicginobili.com, but this features the actual code behind the blog. Historically, the blog started as a WordPress joint in the 2011-2016 period, went on hiatus, then got lost after an SQL table got dropped in a failed 2019 migration. I used Internet Archive to recover all the HTML, then put the blog up as a static site via a [Pelican](https://getpelican.com)-generated webpage. 
 
 In 2026, the Spurs were good again, and I had the itch to write a bit. So I spent a weekend converting the Pelican site to Astro (as I use Astro for another site I run) and have now pushed the "new" Gothic Ginobili to a live webpage. Hooray! For development purposes, here are some important protocol to remember.
+
 ---
 
 ## Commands
